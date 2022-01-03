@@ -1,11 +1,14 @@
 import Header from "./components/Header";
 import Students from "./components/Students";
 import AddStudent from "./components/AddStudent";
+import Stats from "./components/Stats";
 import { useState, useEffect } from 'react'
 
 const App = () => {
   const [showAddStudent, setShowAddStudent] = useState(false)
   const [students, setStudents] = useState([])
+  const [showStats, setShowStats] = useState(false)
+  const [stats, setStats] = useState([])
 
   useEffect(() => {
     const getStudents = async () => {
@@ -24,13 +27,13 @@ const App = () => {
     return data
   }
 
-  //Fetch Student
-  const fetchStudent = async (id) => {
-    const res = await fetch(`http://localhost:5000/students/${id}`)
-    const data = await res.json()
+  // //Fetch Student
+  // const fetchStudent = async (id) => {
+  //   const res = await fetch(`http://localhost:5000/students/${id}`)
+  //   const data = await res.json()
 
-    return data
-  }
+  //   return data
+  // }
 
   //Delete Student
   const deleteStudent = async (id) => {
@@ -54,7 +57,6 @@ const App = () => {
       // body: JSON.stringify(updStudent)
     })
     const data = await res.json()
-    console.log(data)
     setStudents(students.map((student) => student._id === id ? { ...student, present: data.present } : student))
   }
 
@@ -69,25 +71,51 @@ const App = () => {
       body: JSON.stringify(student),
     })
     const newStudent = await res.json()
-    console.log(newStudent)
     setStudents([...students, newStudent])
   }
 
+  //Aggregation
+  const getStats = async () => {
+    setShowStats(!showStats)
+    if (!showStats) {
+      const res = await fetch('http://localhost:5000/students/stats')
+      const data = await res.json()
+      setStats(data)
+      return data
+    }
+  }
+
+  //Attendance
+  // const showAttendance = async () => {
+
+  // }
+
   return (
-    <div className="container">
-      <Header
-        onAdd={() => setShowAddStudent(!showAddStudent)}
-        showAdd={showAddStudent} />
-      {showAddStudent && <AddStudent onAdd={addStudent} />}
-      {students.length > 0 ? (
-        <Students
-          students={students}
-          onDelete={deleteStudent}
-          onToggle={togglePresent} />
-      ) : (
-        "No Students In Your Class"
-      )}
-    </div>
+    <>
+      <div className="container">
+        <Header
+          onAdd={() => setShowAddStudent(!showAddStudent)}
+          showAdd={showAddStudent}
+          onShowStats={getStats}
+          showStats={showStats}
+        />
+        {showAddStudent && <AddStudent onAdd={addStudent} />}
+        {students.length > 0 ? (
+          <Students
+            students={students}
+            onDelete={deleteStudent}
+            onToggle={togglePresent}
+          // showAttendance={showAttendance} 
+          />
+        ) : (
+          "No Students In Your Class"
+        )}
+      </div>
+      {showStats && (
+        <div className="container">
+          <Stats stats={stats} />
+        </div>)}
+    </>
   );
 }
 

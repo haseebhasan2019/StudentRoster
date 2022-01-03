@@ -90,12 +90,12 @@ def update_by_id(id):
     return 'Not Found\n', 404
 
 # GET /students/stats - Return the number of students for each major (aggregate)
-@app.route('/students/stats')
+@app.route('/students/stats', methods=['GET'])
 def stats():
     agg_result = collection.aggregate( 
     [{ 
     "$group" :  
-        {"_id" : "$major",  
+        {"_id" : "$classyr",  
          "count" : {"$sum" : 1} 
          }} 
     ])

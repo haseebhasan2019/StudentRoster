@@ -1,6 +1,6 @@
-import { FaTimes } from 'react-icons/fa'
+import { FaTimes, FaRegListAlt } from 'react-icons/fa'
 
-const Student = ({ student, onDelete, onToggle }) => {
+const Student = ({ student, onDelete, onToggle, showAttendance }) => {
     return (
         <div className={`task ${student.present ? 'reminder' : ''}`}
             onDoubleClick={() => onToggle(student._id)} >
@@ -10,7 +10,12 @@ const Student = ({ student, onDelete, onToggle }) => {
                     onClick={() => onDelete(student._id)}
                 />
             </h3>
-            <p>{student.major} {student.classyr}</p>
+            <p>{student.major} {student.classyr}
+                <FaRegListAlt
+                    style={{ cursor: "pointer" }}
+                    onClick={() => showAttendance(student._id)}
+                />
+            </p>
         </div>
     )
 }
