@@ -4,8 +4,7 @@ const Students = ({ students, onDelete, onToggle }) => {
     return (
         <>
             {students.map((student) => (
-                <Student key={student.id} student={student}
-                    onDelete={onDelete} onToggle={onToggle} />
+                <Student key={student._id} student={student} onDelete={onDelete} onToggle={onToggle} />
             )
             )}
         </>

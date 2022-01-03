@@ -16,7 +16,8 @@ collection = db.students  # can switch to users for that info
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/students')
+# GET /students - Get list of all students
+@app.route('/students', methods=['GET'])
 def students():
     documents = collection.find()
     response = []
@@ -25,7 +26,8 @@ def students():
         response.append(document)
     return jsonify(response)
 
-@app.route('/students/<id>')
+# GET /students/<_id> - Get student by id
+@app.route('/students/<id>', methods=['GET'])
 def student_by_id(id):
     target = str(id)
     documents = collection.find()
@@ -35,7 +37,7 @@ def student_by_id(id):
             response = str(document)
     return response + '\n'
 
-
+# POST /students - Add a new Student to the list
 @app.route('/students', methods=['POST'])
 def add_student():
     print(request.headers)
@@ -46,15 +48,48 @@ def add_student():
     classyr = data['classyr']
     present = data['present']
 
-    db.students.insert_one({
+    obj = db.students.insert_one({
         'name': name,
         'major': major,
         'classyr': classyr,
         'present': present
     })
-    return 'success\n', 201
+    return jsonify({'_id': str(obj.inserted_id), 'name': name, 'major': major, 'classyr': classyr, 'present': present}),201
 
-# Get /listings/stats - return the number of listings for each make (aggregate)
+# DELETE /students/<_id>
+@app.route('/students/<id>', methods=['DELETE'])
+def delete_by_id(id):
+    target = str(id)
+    documents = collection.find()
+    #can I use findOneAndUpdate?
+    for document in documents:
+        if str(document['_id']) == target:
+            db.students.remove(
+                {'_id': ObjectId(target)}
+            )
+            return 'Success\n', 200
+    return 'Not Found\n', 404
+
+# PUT /students/present/<_id> - Update Student Present
+@app.route('/students/present/<id>', methods=['PUT'])
+def update_by_id(id):
+    target = str(id)
+    documents = collection.find()
+    #can I use findOneAndUpdate?
+    for document in documents:
+        if str(document['_id']) == target:
+            if str(document['present']) == 'False':
+                db.students.update_one(
+                    {'_id': ObjectId(target)},  
+                    {'$set': {"present": True}})
+            else:
+                db.students.update_one(
+                    {'_id': ObjectId(target)},  
+                    {'$set': {"present": False}})
+            return jsonify({'_id': str(document['_id']), 'name': str(document['name']), 'major': str(document['major']), 'classyr': str(document['classyr']), 'present': not bool(document['present'])}),200
+    return 'Not Found\n', 404
+
+# GET /students/stats - Return the number of students for each major (aggregate)
 @app.route('/students/stats')
 def stats():
     agg_result = collection.aggregate( 
@@ -65,24 +100,5 @@ def stats():
          }} 
     ])
     return json.dumps(list(agg_result))
-
-# Delete /listings/<_id> - mark a listing as sold
-@app.route('/students/<id>', methods=['DELETE'])
-def delete_by_id(id):
-    target = str(id)
-    documents = collection.find()
-    #can I use findOneAndUpdate?
-    for document in documents:
-        if str(document['_id']) == target:
-            if str(document['sold']) == "false":
-                db.listings.update_one(
-                    {'_id': ObjectId(target)},  
-                    {'$set': {"sold": "true"}})
-            else:
-                db.listings.update_one(
-                    {'_id': ObjectId(target)},  
-                    {'$set': {"sold": "false"}})
-            return 'Success\n', 200
-    return 'Not Found\n', 404
 
 app.run()

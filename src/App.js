@@ -16,7 +16,7 @@ const App = () => {
     getStudents()
   }, [])
 
-  //Fetch tasks
+  //Fetch Students
   const fetchStudents = async () => {
     const res = await fetch('http://localhost:5000/students')
     const data = await res.json()
@@ -24,7 +24,7 @@ const App = () => {
     return data
   }
 
-  //Fetch task
+  //Fetch Student
   const fetchStudent = async (id) => {
     const res = await fetch(`http://localhost:5000/students/${id}`)
     const data = await res.json()
@@ -37,24 +37,25 @@ const App = () => {
     await fetch(`http://localhost:5000/students/${id}`, {
       method: 'DELETE',
     })
-    setStudents(students.filter((student) => student.id !== id))
+    setStudents(students.filter((student) => student._id !== id))
   }
 
   //Mark Student Present
   const togglePresent = async (id) => {
-    const studentToToggle = await fetchStudent(id)
-    const updStudent = { ...studentToToggle, present: !studentToToggle.present }
+    // const studentToToggle = await fetchStudent(id)
+    // const updStudent = { ...studentToToggle, present: !studentToToggle.present }
 
-    const res = await fetch(`http://localhost:5000/students/${id}`, {
+    const res = await fetch(`http://localhost:5000/students/present/${id}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
+        'Accept': 'application/json'
       },
-      body: JSON.stringify(updStudent)
+      // body: JSON.stringify(updStudent)
     })
     const data = await res.json()
-
-    setStudents(students.map((student) => student.id === id ? { ...student, present: data.present } : student))
+    console.log(data)
+    setStudents(students.map((student) => student._id === id ? { ...student, present: data.present } : student))
   }
 
   //Add a New Student
@@ -63,10 +64,12 @@ const App = () => {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(student),
     })
     const newStudent = await res.json()
+    console.log(newStudent)
     setStudents([...students, newStudent])
   }
 

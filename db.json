@@ -1,46 +1,39 @@
 {
   "students": [
     {
-      "_id": 1,
+      "id": 1,
       "name": "Aaron Wang",
       "major": "Biology",
       "classyr": "2022",
       "present": true
     },
     {
-      "_id": 2,
+      "id": 2,
       "name": "Billy Joel",
       "major": "Music",
       "classyr": "2024",
-      "present": true
-    },
-    {
-      "name": "Haseeb Hasan",
-      "major": "Computer Science",
-      "classyr": "2023",
-      "present": true,
-      "_id": 4
+      "present": false
     },
     {
       "name": "Maheem Hasen",
       "major": "ITI and Cog Sci",
       "classyr": "2022",
       "present": true,
-      "_id": 5
+      "id": 5
     },
     {
       "name": "Zohair Hasan",
       "major": "Packaging Eng",
       "classyr": "2019.5",
       "present": true,
-      "_id": 6
+      "id": 6
     },
     {
       "name": "Jack Summa",
       "major": "CS",
       "classyr": "2023",
       "present": false,
-      "_id": 7
+      "id": 7
     }
   ]
 }
